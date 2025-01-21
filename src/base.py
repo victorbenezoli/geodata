@@ -5,7 +5,7 @@ This module provides the GeoDataBase class for handling geospatial data.
 import geopandas as gpd
 import pandas as pd
 import requests
-from src.core.types import GeoLevel, Quality
+from .core.types import GeoLevel, Quality
 
 URL_SPATIAL: str = "https://servicodados.ibge.gov.br/api/v3/malhas"
 URL_METADATA: str = "https://servicodados.ibge.gov.br/api/v1/localidades"
@@ -29,6 +29,7 @@ class GeoDataBase:
     polygons()
         Get the polygons of the spatial data.
     """
+
     def __init__(self, geolevel: GeoLevel, quality: Quality):
         self.geolevel = geolevel
         self.quality = quality
@@ -114,8 +115,8 @@ class GeoDataBase:
             The polygons of the spatial data.
         """
         polygons = self.__polygons()
-        metadata = self.metadata()
-        return metadata.merge(polygons, on="id")
+        metadata = self.metadata
+        return gpd.GeoDataFrame(metadata.merge(polygons, on="id")).set_crs(polygons.crs)
 
     def plot(self, **kwargs) -> None:
         """
