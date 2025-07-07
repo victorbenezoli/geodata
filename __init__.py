@@ -8,15 +8,15 @@ import sys
 import numpy as np
 import pandas as pd
 
-from .src.base import GeoDataBase as GeoData
-from .src.core import types
+from .geodata.base import GeoDataBase as GeoData
+from .geodata.core import types
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Check for required dependencies
-REQUIRED_PACKAGES = ["numpy", "pandas"]
+REQUIRED_PACKAGES = ["numpy", "pandas", "geopandas"]
 
 for package in REQUIRED_PACKAGES:
     try:
