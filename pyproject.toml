@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "geodata"
-version = "0.1.0"
+name = "ibge-geodata"
+version = "0.10.0"
 description = "Python package to use spatial data of Brazilian territorial levels available at IBGE"
 authors = ["Victor Benezoli <victorbenezoli@gmail.com>"]
 license = "GPL"
@@ -8,13 +8,13 @@ readme = "README.md"
 repository = "https://github.com/victorbenezoli/geodata"
 homepage = "https://github.com/victorbenezoli/geodata"
 packages = [
-    { include = "src/core", from = "." },
+    { include = "geodata", from = "." },
 ]
-include = ["src/**/*.py", "README.md"]
+include = ["geodata/**/*.py", "README.md"]
 exclude = ["tests/*", "docs/*"]
 classifiers = [
     "Development Status :: 3 - Alpha",
-    "Intended Audience :: Public",
+    "Intended Audience :: Science/Research",
     "License :: OSI Approved :: GNU General Public License (GPL)",
     "Programming Language :: Python :: 3.11",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -25,6 +25,8 @@ python = ">=3.11"
 geopandas = "^1.0.1"
 requests = "^2.32.3"
 pytest = "^8.3.4"
+numpy = "^2.2.3"
+rich = "^14.0.0"
 
 [build-system]
 requires = ["poetry-core"]
