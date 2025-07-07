@@ -11,7 +11,7 @@
 from geodata import GeoData, types
 
 # Initialize the geodata object
-level = types.GeoLevel.state.
+level = types.GeoLevel.state
 quality = types.Quality.medium
 geo = GeoData(geolevel=level, quality=quality)
 
