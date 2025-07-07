@@ -11,8 +11,8 @@
 from geodata import GeoData, types
 
 # Initialize the geodata object
-level = types.GeoLevel('state')
-quality = types.Quality('medium')
+level = types.GeoLevel.state.
+quality = types.Quality.medium
 geo = GeoData(geolevel=level, quality=quality)
 
 # Load the polygons data to a variable

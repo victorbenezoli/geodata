@@ -58,7 +58,11 @@ class GeoDataBase:
                 gpd.GeoDataFrame.from_features(response.json())
                 .set_axis(["geometry", "id"], axis=1)
                 .reindex(columns=["id", "geometry"])
-                .assign(id=lambda df: 1 if self.geolevel.spatial.value == "paises" else df.id)
+                .assign(
+                    id=lambda df: 1
+                    if self.geolevel.spatial.value == "paises"
+                    else df.id
+                )
                 .astype({"id": int})
             )
         return data

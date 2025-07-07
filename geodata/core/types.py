@@ -23,6 +23,12 @@ class Quality(StrEnum):
     MEDIUM = "intermediaria"
     HIGH = "maxima"
 
+    def __repr__(self) -> str:
+        return f"Quality.{self.name}"
+    
+    def __str__(self) -> str:
+        return self.__repr__()
+
 
 class SpatialLevel(StrEnum):
     """
@@ -98,7 +104,7 @@ class GeoLevel(Enum):
     STATE = (SpatialLevel.STATE, Metadata.STATE)
     MUNICIPALITY = (SpatialLevel.MUNICIPALITY, Metadata.MUNICIPALITY)
 
-    def __init__(self, spatial: str, metadata: str):
+    def __init__(self, spatial: SpatialLevel, metadata: Metadata):
         self.spatial = spatial
         self.metadata = metadata
 
