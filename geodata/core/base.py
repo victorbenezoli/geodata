@@ -5,7 +5,9 @@ This module provides the GeoDataBase class for handling geospatial data.
 import geopandas as gpd
 import pandas as pd
 import requests
-from .core.types import GeoLevel, Quality
+
+from geodata.core.geolevel import GeoLevel
+from geodata.core.quality import Quality
 
 URL_SPATIAL: str = "https://servicodados.ibge.gov.br/api/v3/malhas"
 URL_METADATA: str = "https://servicodados.ibge.gov.br/api/v1/localidades"
@@ -22,19 +24,28 @@ class GeoDataBase:
     quality : Quality
         The quality level of the spatial data.
 
-    Methods
-    -------
-    metadata()
-        Get the metadata of the spatial data.
-    polygons()
-        Get the polygons of the spatial data.
+    Properties
+    ----------
+    metadata : pd.DataFrame
+        The metadata of the spatial data.
+    polygons : gpd.GeoDataFrame
+        The polygons of the spatial data.
+
     """
 
     def __init__(self, geolevel: GeoLevel, quality: Quality):
         self.geolevel = geolevel
         self.quality = quality
 
-    def __polygons(self) -> gpd.GeoDataFrame:
+    def __repr__(self):
+        """Return a string representation of the GeoData instance."""
+        return f"GeoData(geolevel={self.geolevel}, quality={self.quality})"
+
+    def __str__(self):
+        """Return a string representation of the GeoData instance."""
+        return f"GeoData: {self.geolevel.spatial} - {self.quality.value}"
+
+    def _fetch_polygons(self) -> gpd.GeoDataFrame:
         """
         Get the polygons of the spatial data.
 
@@ -67,8 +78,7 @@ class GeoDataBase:
             )
         return data
 
-    @property
-    def metadata(self) -> pd.DataFrame:
+    def _fetch_metadata(self) -> pd.DataFrame:
         """
         Get the metadata of the spatial data.
 
@@ -83,8 +93,20 @@ class GeoDataBase:
             response = session.get(url, params=params)
             response.raise_for_status()
             data = response.json()
+        return pd.DataFrame.from_dict(data)
+
+    @property
+    def metadata(self) -> pd.DataFrame:
+        """
+        Get the metadata of the spatial data.
+
+        Returns
+        -------
+        pd.DataFrame
+            The metadata of the spatial data.
+        """
         meta = (
-            pd.DataFrame.from_dict(data)
+            self._fetch_metadata()
             .pipe(
                 lambda df: df.drop(
                     columns=[
@@ -121,11 +143,12 @@ class GeoDataBase:
         gpd.GeoDataFrame
             The polygons of the spatial data.
         """
-        polygons = self.__polygons()
+        polygons = self._fetch_polygons()
         if self.geolevel.spatial == "paises":
-            return polygons.set_crs("EPSG:4326")
+            return polygons.set_crs("EPSG:4674")
         metadata = self.metadata
-        return gpd.GeoDataFrame(metadata.merge(polygons, on="id")).set_crs(polygons.crs)
+        crs = polygons.crs if polygons.crs is not None else "EPSG:4674"
+        return gpd.GeoDataFrame(metadata.merge(polygons, on="id")).set_crs(crs)
 
     def plot(self, **kwargs) -> None:
         """
