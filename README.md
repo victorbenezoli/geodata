@@ -13,7 +13,7 @@ import geodata as gd
 # Initialize the geodata object
 geolevel = gd.GeoLevel.STATE
 quality = gd.Quality.MEDIUM
-geo = gd.GeoData(geolevel=level, quality=quality)
+geo = gd.GeoData(geolevel=geolevel, quality=quality)
 
 # Load the polygons data to a variable
 data_pol = geo.polygons
