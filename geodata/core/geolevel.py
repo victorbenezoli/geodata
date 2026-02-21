@@ -23,8 +23,8 @@ class SpatialLevel(StrEnum):
 
     COUNTRY = "paises"
     REGION = "regiao"
-    INTERMEDIATE_REGION = "intermediaria"
-    IMMEDIATE_REGION = "imediata"
+    INTERMEDIATE_REGION = "regiao-intermediaria"
+    IMMEDIATE_REGION = "regiao-imediata"
     STATE = "UF"
     MUNICIPALITY = "municipio"
 

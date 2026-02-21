@@ -1,0 +1,79 @@
+site_name: ibge-geodata
+site_description: Python package to access and manipulate Brazilian IBGE territorial geospatial data
+site_author: Victor Benezoli
+site_url: https://victorbenezoli.github.io/geodata
+repo_name: victorbenezoli/geodata
+repo_url: https://github.com/victorbenezoli/geodata
+
+docs_dir: docs/wiki
+theme:
+  name: material
+  logo: assets/logo/logo.png
+  favicon: assets/logo/logo.png
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Modo escuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Modo claro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.code.annotate
+    - search.highlight
+    - search.suggest
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Installation: install.md
+  - Quickstart: quickstart.md
+  - API Reference:
+      - GeoData: api/geodata.md
+      - GeoLocator: api/geolocator.md
+      - GeoCoords: api/geocoords.md
+      - GeoLevel: api/geolevel.md
+      - Quality: api/quality.md
+  - Examples: examples.md
+  - FAQ: faq.md
+  - Contributing: contributing.md
+  - License: license.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/victorbenezoli/geodata
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/ibge-geodata/
