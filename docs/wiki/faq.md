@@ -1,4 +1,3 @@
-<div style="width:40%;margin:0 auto 1rem;aspect-ratio:19/8;overflow:hidden;background:url('../assets/wiki/wiki_faq.png') center/100% auto no-repeat;"></div>
 
 # FAQ
 

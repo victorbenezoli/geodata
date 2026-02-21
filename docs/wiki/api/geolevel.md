@@ -1,4 +1,3 @@
-<div style="width:40%;margin:0 auto 1rem;aspect-ratio:4/1;overflow:hidden;background:url('../../assets/wiki/wiki_api_reference.png') center/100% auto no-repeat;"></div>
 
 # GeoLevel
 
