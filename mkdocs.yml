@@ -12,20 +12,12 @@ theme:
   favicon: assets/logo/logo.png
   language: en
   palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: teal
-      accent: teal
-      toggle:
-        icon: material/weather-night
-        name: Modo escuro
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: teal
-      accent: teal
-      toggle:
-        icon: material/weather-sunny
-        name: Modo claro
+    scheme: github
+    primary: custom
+    accent: custom
+  font:
+    text: false
+    code: false
   features:
     - navigation.tabs
     - navigation.sections
@@ -35,6 +27,9 @@ theme:
     - content.code.annotate
     - search.highlight
     - search.suggest
+
+extra_css:
+  - assets/stylesheets/github.css
 
 markdown_extensions:
   - admonition
