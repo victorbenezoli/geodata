@@ -8,7 +8,7 @@ import sys
 import numpy as np
 import pandas as pd
 
-from .core import GeoData, GeoLevel, Quality
+from .core import GeoData, GeoLevel, GeoLocator, Quality
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -24,7 +24,7 @@ for package in REQUIRED_PACKAGES:
         logger.error("Required package '%s' is not installed.", package)
         sys.exit(1)
 
-__all__ = ["GeoData", "GeoLevel", "Quality"]
+__all__ = ["GeoData", "GeoLevel", "Quality", "GeoLocator"]
 
 __doc__ = """
 geodata
@@ -44,6 +44,8 @@ GeoLevel
     Enum for geographical levels of spatial data.
 Quality
     Enum for quality levels of spatial data.
+GeoLocator
+    Point-in-polygon locator for IBGE administrative boundaries.
 
 Examples
 --------

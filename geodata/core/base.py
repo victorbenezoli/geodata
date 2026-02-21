@@ -9,7 +9,7 @@ import requests
 from geodata.core.geolevel import GeoLevel
 from geodata.core.quality import Quality
 
-URL_SPATIAL: str = "https://servicodados.ibge.gov.br/api/v3/malhas"
+URL_SPATIAL: str = "https://servicodados.ibge.gov.br/api/v4/malhas"
 URL_METADATA: str = "https://servicodados.ibge.gov.br/api/v1/localidades"
 
 
@@ -70,9 +70,9 @@ class GeoDataBase:
                 .set_axis(["geometry", "id"], axis=1)
                 .reindex(columns=["id", "geometry"])
                 .assign(
-                    id=lambda df: 1
-                    if self.geolevel.spatial.value == "paises"
-                    else df.id
+                    id=lambda df: (
+                        1 if self.geolevel.spatial.value == "paises" else df.id
+                    )
                 )
                 .astype({"id": int})
             )

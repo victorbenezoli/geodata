@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ibge-geodata"
-version = "1.0.0"
+version = "2.0.0"
 description = "Python package to use spatial data of Brazilian territorial levels available at IBGE"
 authors = ["Victor Benezoli <victorbenezoli@gmail.com>"]
 license = "GPL"
@@ -30,6 +30,11 @@ matplotlib = "^3.10.3"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = "*"
+mkdocs-minify-plugin = "*"
+pymdown-extensions = "*"
 
 [build-system]
 requires = ["poetry-core"]
