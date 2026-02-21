@@ -81,7 +81,10 @@ Full documentation at **[victorbenezoli.github.io/geodata](https://victorbenezol
 
 - Python 3.11+
 
----
+# Initialize the geodata object
+geolevel = gd.GeoLevel.STATE
+quality = gd.Quality.MEDIUM
+geo = gd.GeoData(geolevel=geolevel, quality=quality)
 
 ## License
 
