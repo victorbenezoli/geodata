@@ -38,9 +38,10 @@ points = {
     "Porto Alegre": GeoCoords(lat=-30.0346, lon=-51.2177),
 }
 
+locator = GeoLocator()
 for city, coords in points.items():
-    loc = GeoLocator(coords)
-    print(f"{city}: {loc.state} — {loc.municipality} ({loc.region})")
+    location = locator.locate(coords)
+    print(f"{city}: {location.state} — {location.municipality} ({location.region})")
 ```
 
 ---
