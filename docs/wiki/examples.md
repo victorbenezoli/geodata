@@ -1,4 +1,3 @@
-
 # Examples
 
 ## Choropleth map of states

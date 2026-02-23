@@ -4,3 +4,4 @@ __pycache__/site/
 dist/
 __pycache__/
 *.pyc
+site/
