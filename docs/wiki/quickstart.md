@@ -84,19 +84,18 @@ easting, northing = brasilia.to_utm("EPSG:32722")
 `GeoLocator` finds which administrative division a point belongs to:
 
 ```python
-loc = GeoLocator(GeoCoords(lat=-15.7801, lon=-47.9292))
+locator  = GeoLocator()
+coords   = GeoCoords(lat=-15.7801, lon=-47.9292)
+location = locator.locate(coords)
 
-print(loc.state)               # 'DF'
-print(loc.municipality)        # 'Brasília'
-print(loc.region)              # 'Centro-Oeste'
-print(loc.intermediate_region)
-print(loc.immediate_region)
+print(location.state)                # 'Distrito Federal'
+print(location.municipality)         # 'Brasília'
+print(location.region)               # 'Centro-Oeste'
+print(location.intermediate_region)  # 'Brasília'
+print(location.immediate_region)     # 'Brasília'
 
-# Full metadata row for any level
-print(loc.locate(GeoLevel.STATE))
-
-# All levels at once
-print(loc.all_levels())
+# Serialise to dict
+print(location.to_dict())
 ```
 
 !!! tip "Quality vs speed"
