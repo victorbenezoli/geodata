@@ -15,13 +15,13 @@ Python package to access and manipulate **Brazilian IBGE territorial geospatial 
 
 ## Highlights
 
-- Typed API for all IBGE territorial levels
+- Typed API for all IBGE territorial levels (`COUNTRY` → `MUNICIPALITY`)
 - Geometry as `GeoDataFrame` with metadata aligned by `id`
-- Point-in-polygon localisation with `GeoLocator`
-- Validated geographic coordinates with `GeoCoords`
-- Geodesic distance and bearing calculations
-- WGS-84 ↔ UTM coordinate conversion
-- Quick plotting with `plot()`
+- Point-in-polygon localisation across all administrative levels with `GeoLocator`
+- Validated WGS-84 coordinates with `GeoCoords`
+- Geodesic distance and bearing calculations (haversine)
+- WGS-84 ↔ UTM coordinate conversion via `pyproj`
+- Quick plotting with `GeoDataFrame.plot()`
 
 ---
 
@@ -39,35 +39,41 @@ pip install ibge-geodata
 from geodata import GeoData, GeoLevel, Quality, GeoLocator
 from geodata.utils.geocoords import GeoCoords
 
-# Polygons + metadata for all states
-estados = GeoData(GeoLevel.STATE, Quality.LOW)
-estados.plot()
+# Download polygons + metadata for all states
+states = GeoData(GeoLevel.STATE, Quality.LOW)
+states.plot()
 
-# Locate a point
+# Locate a point across all administrative levels
+locator  = GeoLocator()
 brasilia = GeoCoords(lat=-15.7801, lon=-47.9292)
-loc = GeoLocator(brasilia)
+location = locator.locate(brasilia)
 
-print(loc.state)         # 'DF'
-print(loc.municipality)  # 'Brasília'
-print(loc.region)        # 'Centro-Oeste'
+print(location.state)                # 'Distrito Federal'
+print(location.municipality)         # 'Brasília'
+print(location.region)               # 'Centro-Oeste'
+print(location.intermediate_region)  # 'Brasília'
+print(location.immediate_region)     # 'Brasília'
+
+# Reuse the same locator for multiple points efficiently
+manaus = GeoCoords(lat=-3.1190, lon=-60.0217)
+print(locator.locate(manaus).state)  # 'Amazonas'
 
 # Geodesic calculations
-manaus = GeoCoords(lat=-3.1190, lon=-60.0217)
 print(brasilia.distance_to(manaus))  # ~2689.6 km
 print(brasilia.bearing_to(manaus))   # ~322.0°
 ```
 
 ---
 
-## API (core)
+## API
 
-| Class        | Description                                                                                   |
-| ------------ | --------------------------------------------------------------------------------------------- |
-| `GeoData`    | Main entry point — downloads polygons and metadata                                            |
-| `GeoLocator` | Point-in-polygon locator for administrative divisions                                         |
-| `GeoCoords`  | Validated WGS-84 coordinate with geodesic utilities                                           |
-| `GeoLevel`   | Enum: `COUNTRY`, `REGION`, `INTERMEDIATE_REGION`, `IMMEDIATE_REGION`, `STATE`, `MUNICIPALITY` |
-| `Quality`    | Enum: `LOW`, `MEDIUM`, `HIGH`                                                                 |
+| Class        | Description                                                                                    |
+| ------------ | ---------------------------------------------------------------------------------------------- |
+| `GeoData`    | Main entry point — downloads polygons and aligned metadata for a given level and quality       |
+| `GeoLocator` | Point-in-polygon locator — returns a `GeoLocation` with all administrative divisions           |
+| `GeoCoords`  | Validated WGS-84 coordinate pair with geodesic distance, bearing, and UTM conversion utilities |
+| `GeoLevel`   | Enum: `COUNTRY`, `REGION`, `INTERMEDIATE_REGION`, `IMMEDIATE_REGION`, `STATE`, `MUNICIPALITY`  |
+| `Quality`    | Enum: `LOW`, `MEDIUM`, `HIGH` — controls boundary resolution and download size                 |
 
 ---
 
@@ -80,11 +86,9 @@ Full documentation at **[victorbenezoli.github.io/geodata](https://victorbenezol
 ## Requirements
 
 - Python 3.11+
+- `geopandas`, `pyproj`, `shapely`, `requests`
 
-# Initialize the geodata object
-geolevel = gd.GeoLevel.STATE
-quality = gd.Quality.MEDIUM
-geo = gd.GeoData(geolevel=geolevel, quality=quality)
+---
 
 ## License
 
