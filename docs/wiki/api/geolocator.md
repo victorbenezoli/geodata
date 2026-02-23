@@ -1,4 +1,3 @@
-
 # GeoLocator
 
 Locates the administrative divisions that contain a geographic point.
@@ -126,5 +125,5 @@ print(location.to_dict())
 ```
 
 !!! warning "Point near a border"
-    For points very close to state borders, use `Quality.HIGH` to ensure the
-    low-resolution geometry does not exclude the point.
+For points very close to state borders, use `Quality.HIGH` to ensure the
+low-resolution geometry does not exclude the point.
