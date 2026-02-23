@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../assets/banner/readme_banner.png" alt="IBGE GeoData" style="max-width:700px;" />
+  <img src="assets/banner/readme_banner.png" alt="IBGE GeoData" style="max-width:700px;" />
 </p>
 
 # ibge-geodata
