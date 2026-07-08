@@ -1,13 +1,10 @@
-
 # GeoData
 
-Main class for accessing IBGE territorial polygons and metadata.
+`GeoData` is the main entry point for loading IBGE territorial meshes and aligned locality metadata.
 
 ```python
 from geodata import GeoData, GeoLevel, Quality
 ```
-
----
 
 ## Constructor
 
@@ -15,31 +12,12 @@ from geodata import GeoData, GeoLevel, Quality
 GeoData(geolevel: GeoLevel, quality: Quality)
 ```
 
-| Parameter  | Type       | Description              |
-| ---------- | ---------- | ------------------------ |
-| `geolevel` | `GeoLevel` | Desired geographic level |
-| `quality`  | `Quality`  | Polygon resolution       |
-
----
+| Parameter  | Type       | Description                                    |
+| ---------- | ---------- | ---------------------------------------------- |
+| `geolevel` | `GeoLevel` | Territorial level to fetch                     |
+| `quality`  | `Quality`  | Polygon resolution requested from the mesh API |
 
 ## Properties
-
-### `polygons`
-
-```python
-@property
-def polygons(self) -> gpd.GeoDataFrame
-```
-
-Returns a `GeoDataFrame` with geometries and all metadata joined by `id`.
-
-```python
-states = GeoData(GeoLevel.STATE, Quality.LOW)
-gdf = states.polygons
-print(gdf.columns)  # ['id', 'nome', 'sigla', ..., 'geometry']
-```
-
----
 
 ### `metadata`
 
@@ -48,14 +26,29 @@ print(gdf.columns)  # ['id', 'nome', 'sigla', ..., 'geometry']
 def metadata(self) -> pd.DataFrame
 ```
 
-Returns metadata only (no geometry) from the IBGE localities API.
+Returns a plain `DataFrame` from the IBGE localities endpoint. Columns are normalised so the requested level is exposed with a predictable shape such as `id`, `nome`, `sigla`, and parent administrative fields when available.
 
 ```python
-meta = states.metadata
-print(meta[["id", "nome", "sigla"]])
+states = GeoData(GeoLevel.STATE, Quality.LOW)
+print(states.metadata[["id", "nome", "sigla"]].head())
 ```
 
----
+### `polygons`
+
+```python
+@property
+def polygons(self) -> gpd.GeoDataFrame
+```
+
+Returns a merged `GeoDataFrame` containing geometry plus metadata aligned by `id`.
+
+```python
+states = GeoData(GeoLevel.STATE, Quality.LOW)
+gdf = states.polygons
+print(gdf.columns)
+```
+
+For `GeoLevel.COUNTRY`, the result is a single polygon in `EPSG:4674`.
 
 ## Methods
 
@@ -65,22 +58,24 @@ print(meta[["id", "nome", "sigla"]])
 def plot(self, **kwargs) -> None
 ```
 
-Shortcut for `self.polygons.plot(...)`. Accepts all GeoPandas/Matplotlib `plot` arguments.
+Convenience wrapper around `self.polygons.plot(**kwargs)`.
 
 ```python
-states.plot(column="nome", figsize=(12, 8))
+states.plot(column="sigla", figsize=(12, 8), edgecolor="white")
 ```
 
----
+## Notes
 
-## Representation
+- Data is requested lazily when `metadata` or `polygons` is accessed.
+- `polygons` triggers both geometry and metadata retrieval for non-country levels.
+- CRS is preserved from the geometry payload when available, otherwise it falls back to `EPSG:4674`.
+
+## Example
 
 ```python
-repr(GeoData(GeoLevel.STATE, Quality.LOW))
-# "GeoData(geolevel=GeoLevel.STATE, quality=Quality.LOW)"
-```
+from geodata import GeoData, GeoLevel, Quality
 
-```python
-repr(GeoData(GeoLevel.STATE, Quality.LOW))
-# "GeoData(geolevel=GeoLevel.STATE, quality=Quality.LOW)"
+municipalities = GeoData(GeoLevel.MUNICIPALITY, Quality.MEDIUM)
+print(len(municipalities.metadata))
+print(municipalities.polygons.head())
 ```
