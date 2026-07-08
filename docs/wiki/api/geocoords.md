@@ -1,4 +1,3 @@
-
 # GeoCoords
 
 Represents a validated WGS-84 geographic coordinate pair.
@@ -20,7 +19,7 @@ GeoCoords(lat: float, lon: float)
 | `lat`     | `[-90, 90]`   | Latitude in decimal degrees  |
 | `lon`     | `[-180, 180]` | Longitude in decimal degrees |
 
-Values are coerced to `float` automatically. Exceptions are raised for invalid inputs.
+Values are coerced to `float` automatically. Invalid types raise `TypeError`; out-of-range values raise `ValueError`.
 
 ---
 
@@ -72,6 +71,8 @@ def from_utm(easting: float, northing: float, source_crs: str) -> GeoCoords
 p = GeoCoords.from_utm(197055.0, 8254536.0, "EPSG:32722")
 ```
 
+This method converts projected coordinates to latitude and longitude using `pyproj`.
+
 ---
 
 ## Serialisation
@@ -93,6 +94,8 @@ p = GeoCoords.from_utm(197055.0, 8254536.0, "EPSG:32722")
 ```python
 easting, northing = GeoCoords(lat=-15.7801, lon=-47.9292).to_utm("EPSG:32722")
 ```
+
+`target_crs` may be any CRS string accepted by `pyproj`.
 
 ### `to_shapely_point`
 
@@ -123,6 +126,12 @@ Initial bearing in degrees (0–360°), measured clockwise from true north.
 ```python
 print(brasilia.bearing_to(manaus))  # ~322.0°
 ```
+
+## Notes
+
+- Coordinates are always stored internally as decimal degrees in WGS-84.
+- `to_shapely_point()` returns a `Point(lon, lat)`, which matches GIS axis order.
+- CRS transformers are cached internally to reduce repeated conversion overhead.
 
 ---
 
