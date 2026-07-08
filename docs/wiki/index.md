@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner/readme_banner.png" alt="IBGE GeoData" style="max-width:700px;" />
+  <img src="assets/logo/horizontal/ibge-geodata-logo-horizontal.svg" alt="IBGE GeoData" style="max-width: 760px; width: 100%;" />
 </p>
 
 # ibge-geodata
@@ -8,80 +8,79 @@
 [![Python](https://img.shields.io/pypi/pyversions/ibge-geodata)](https://pypi.org/project/ibge-geodata/)
 [![License](https://img.shields.io/badge/license-GPL-blue)](license.md)
 
-**ibge-geodata** is a Python package to access and manipulate Brazilian IBGE territorial geospatial data directly in DataFrames and GeoDataFrames.
+ibge-geodata is a Python package for consuming Brazilian territorial data from IBGE with a workflow oriented around GeoPandas, validated coordinates, and reproducible administrative lookups.
 
----
-
-## What you can do
+## What Changed In 2.0
 
 <div class="grid cards" markdown>
 
-- :material-map-outline: **Territorial polygons**
+- :material-map-search-outline: **Unified territorial access**
 
-  Download geometries for countries, regions, states, municipalities, and intermediate/immediate regions.
+  Load country, region, intermediate region, immediate region, state, or municipality layers from the same `GeoData` API.
 
-- :material-table: **Aligned metadata**
+- :material-database-sync-outline: **Merged metadata and geometry**
 
-  IBGE localities API metadata automatically joined to geometries by `id`.
+  Use `metadata` for plain tabular data or `polygons` for a merged `GeoDataFrame` keyed by `id`.
 
-- :material-crosshairs-gps: **Point localisation**
+- :material-crosshairs-gps: **Reusable point locator**
 
-  Find the state, municipality, and region that contain any geographic point.
+  `GeoLocator` caches boundary layers and returns a structured `GeoLocation` object for repeated queries.
 
-- :material-chart-scatter-plot: **Quick visualisation**
+- :material-axis-arrow: **Coordinate utilities**
 
-  Generate maps in one line with `geodata.plot()`.
+  `GeoCoords` validates latitude and longitude, computes distance and bearing, and converts between WGS-84 and projected CRS values.
 
 </div>
 
----
-
-## Quick install
+## Install
 
 ```bash
 pip install ibge-geodata
 ```
 
----
+Requires Python 3.11 or newer.
 
-## Minimal example
+## First Look
 
 ```python
-from geodata import GeoData, GeoLevel, Quality, GeoLocator
+from geodata import GeoData, GeoLevel, GeoLocator, Quality
 from geodata.utils.geocoords import GeoCoords
 
-# Polygons and metadata for all states
 states = GeoData(GeoLevel.STATE, Quality.LOW)
-states.plot()
+print(states.polygons[["id", "nome", "sigla"]].head())
 
-# Locate a point
-brasilia = GeoCoords(lat=-15.7801, lon=-47.9292)
-loc = GeoLocator(brasilia)
-print(loc.state)         # 'DF'
-print(loc.municipality)  # 'Brasília'
+locator = GeoLocator()
+point = GeoCoords(lat=-15.7801, lon=-47.9292)
+location = locator.locate(point)
+
+print(location.state)
+print(location.municipality)
+print(location.to_dict())
 ```
 
----
+## Main Concepts
 
-## Navigation
-
-| Page                            | Description                             |
-| ------------------------------- | --------------------------------------- |
-| [Installation](install.md)      | Requirements and setup instructions     |
-| [Quickstart](quickstart.md)     | Practical guide with annotated examples |
-| [API Reference](api/geodata.md) | Full documentation for all classes      |
-| [Examples](examples.md)         | Real-world use cases                    |
-| [FAQ](faq.md)                   | Frequently asked questions              |
-| [Contributing](contributing.md) | How to contribute to the project        |
-
----
-
-## API Reference
-
-| Class                             | Description                                                               |
+| Object                            | Description                                                               |
 | --------------------------------- | ------------------------------------------------------------------------- |
-| [`GeoData`](api/geodata.md)       | Downloads territorial polygons and metadata for a given level and quality |
-| [`GeoLocator`](api/geolocator.md) | Finds the administrative divisions that contain a geographic point        |
-| [`GeoCoords`](api/geocoords.md)   | Validated WGS-84 coordinate pair with geodesic utilities                  |
-| [`GeoLevel`](api/geolevel.md)     | Enum of available geographic levels (country, state, municipality…)       |
-| [`Quality`](api/quality.md)       | Enum controlling polygon resolution (low, medium, high)                   |
+| [`GeoData`](api/geodata.md)       | Entry point for polygon download, metadata retrieval, and direct plotting |
+| [`GeoLocator`](api/geolocator.md) | Point-in-polygon lookup across IBGE administrative layers                 |
+| [`GeoCoords`](api/geocoords.md)   | Validated WGS-84 coordinate object with geodesic and CRS helpers          |
+| [`GeoLevel`](api/geolevel.md)     | Enumeration of supported territorial levels                               |
+| [`Quality`](api/quality.md)       | Resolution strategy for boundary downloads                                |
+
+## Documentation Map
+
+| Page                            | Use it for                                                     |
+| ------------------------------- | -------------------------------------------------------------- |
+| [Installation](install.md)      | Environment requirements and local setup                       |
+| [Quickstart](quickstart.md)     | Core workflows with copy-paste examples                        |
+| [Examples](examples.md)         | End-to-end snippets for maps, localisation, and CRS conversion |
+| [FAQ](faq.md)                   | Performance, border cases, and export guidance                 |
+| [Contributing](contributing.md) | Development workflow and project contribution                  |
+
+## Why Use It
+
+- It removes most of the boilerplate around IBGE mesh and locality endpoints.
+- It keeps geometry and metadata aligned in a predictable tabular shape.
+- It gives you a single coordinate model for validation, distance, bearing, and projection transforms.
+- It makes repeated localisation practical by caching polygon layers inside the locator.

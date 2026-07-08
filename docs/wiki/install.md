@@ -1,26 +1,26 @@
-
 # Installation
 
 ## Requirements
 
-- Python **3.11** or higher
-- Operating system: Linux, macOS, or Windows
+- Python 3.11 or newer
+- Network access to IBGE APIs
+- A working geospatial stack supported by GeoPandas on your platform
 
-## Via pip
+ibge-geodata targets Linux, macOS, and Windows.
+
+## Install From PyPI
 
 ```bash
 pip install ibge-geodata
 ```
 
-## Via Poetry
+## Install With Poetry
 
 ```bash
 poetry add ibge-geodata
 ```
 
-## Development installation
-
-Clone the repository and install all development dependencies:
+## Development Setup
 
 ```bash
 git clone https://github.com/victorbenezoli/geodata.git
@@ -28,21 +28,30 @@ cd geodata
 poetry install
 ```
 
-## Dependencies
+If you plan to build the documentation locally, also install the docs dependency group.
 
-| Package      | Minimum version | Purpose                                 |
-| ------------ | --------------- | --------------------------------------- |
-| `geopandas`  | 1.0             | GeoDataFrames and spatial operations    |
-| `pyproj`     | —               | Coordinate reference system conversions |
-| `shapely`    | —               | Geometries and point-in-polygon         |
-| `requests`   | 2.32            | IBGE API calls                          |
-| `numpy`      | 2.0             | Numerical operations                    |
-| `pandas`     | —               | Metadata DataFrames                     |
-| `matplotlib` | 3.10            | Map visualisation                       |
+```bash
+poetry install --with docs
+```
 
-## Verification
+## Runtime Dependencies
+
+| Package     | Purpose                                                     |
+| ----------- | ----------------------------------------------------------- |
+| `geopandas` | Polygon loading, CRS handling, plotting, and spatial tables |
+| `requests`  | HTTP access to IBGE endpoints                               |
+| `numpy`     | Numeric utilities used by the package                       |
+| `pandas`    | Metadata tables                                             |
+| `pyproj`    | Coordinate transformations used by `GeoCoords`              |
+| `shapely`   | Point geometry and polygon containment                      |
+
+## Verify The Installation
 
 ```python
-import geodata
-print(geodata.__version__)
+from geodata import GeoData, GeoLevel, Quality
+
+states = GeoData(GeoLevel.STATE, Quality.LOW)
+print(states.metadata.head())
 ```
+
+If this succeeds, the package, its dependencies, and IBGE connectivity are all working.

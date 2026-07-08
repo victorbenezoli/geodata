@@ -1,77 +1,79 @@
-
 # FAQ
 
-## Downloads are slow. How can I speed things up?
+## Downloads are slow. How can I reduce startup time?
 
-Use `Quality.LOW`. Municipality polygons at maximum quality can be several MB each.
+Use `Quality.LOW` whenever you do not need detailed borders. This matters most for municipality and regional layers.
 
 ```python
+from geodata import GeoData, GeoLevel, Quality
+
 municipalities = GeoData(GeoLevel.MUNICIPALITY, Quality.LOW)
 ```
 
----
+## `GeoLocator` returned `None` for a point that should be inside Brazil
 
-## `GeoLocator` returns `None` for a point inside Brazil
-
-This usually happens for points very close to state borders when polygon quality is low. Use `Quality.HIGH`:
+The most common cause is a coarse polygon layer near a border. Retry with `Quality.HIGH`.
 
 ```python
-loc = GeoLocator(coords, quality=Quality.HIGH)
+from geodata import GeoLocator, Quality
+
+locator = GeoLocator(quality=Quality.HIGH)
+location = locator.locate(coords)
 ```
 
----
+## Does `GeoLocator` cache anything?
 
-## Can I use degree/minute/second coordinates?
+Yes. It loads all required polygon layers during construction and keeps them in memory for later `locate()` calls. If you need to resolve many points, reuse the same `GeoLocator` instance.
 
-`GeoCoords` expects decimal degrees. Convert first:
+## Can I access metadata without downloading the merged polygon layer?
+
+Yes. Use the `metadata` property.
+
+```python
+states = GeoData(GeoLevel.STATE, Quality.LOW)
+print(states.metadata.head())
+```
+
+## Can I export the geometry to a local file?
+
+Yes. `polygons` is a standard GeoPandas `GeoDataFrame`, so you can use GeoPandas writers directly.
+
+```python
+states.polygons.to_file("states.gpkg", driver="GPKG")
+states.polygons.to_file("states.geojson", driver="GeoJSON")
+```
+
+## Can I use coordinates from another CRS?
+
+Yes. Convert them to WGS-84 with `GeoCoords.from_utm()` when the source CRS is projected.
+
+```python
+from geodata.utils.geocoords import GeoCoords
+
+coords = GeoCoords.from_utm(197055.0, 8254536.0, "EPSG:32722")
+```
+
+## Can I still work with degree-minute-second coordinates?
+
+Yes, but convert them to decimal degrees before constructing `GeoCoords`.
 
 ```python
 def dms_to_dd(degrees, minutes, seconds, direction):
-    dd = degrees + minutes / 60 + seconds / 3600
-    return -dd if direction in ("S", "W") else dd
-
-lat = dms_to_dd(15, 46, 47.9, "S")   # -15.7800
-lon = dms_to_dd(47, 55, 45.1, "W")   # -47.9292
+    decimal = degrees + minutes / 60 + seconds / 3600
+    return -decimal if direction in ("S", "W") else decimal
 ```
 
----
+## What happens if the IBGE API is unavailable?
 
-## The IBGE API is down. What happens?
-
-`GeoDataBase` raises `requests.HTTPError`. You can catch and handle it:
+The request layer raises an HTTP exception from `requests`. Handle it in your application if you need retry or fallback logic.
 
 ```python
 import requests
+from geodata import GeoData, GeoLevel, Quality
+
 try:
-    geodata = GeoData(GeoLevel.STATE, Quality.LOW)
-    gdf = geodata.polygons
-except requests.HTTPError as e:
-    print(f"IBGE API error: {e}")
-```
-
----
-
-## How do I save polygons locally?
-
-Use native GeoPandas methods:
-
-```python
-# GeoPackage (recommended)
-states.polygons.to_file("states.gpkg", driver="GPKG")
-
-# GeoJSON
-states.polygons.to_file("states.geojson", driver="GeoJSON")
-
-# Shapefile
-states.polygons.to_file("states.shp")
-```
-
----
-
-## Can I reproject to SIRGAS 2000?
-
-Yes, use GeoPandas `to_crs`. SIRGAS 2000 is `EPSG:4674`:
-
-```python
-gdf_sirgas = states.polygons.to_crs("EPSG:4674")
+    states = GeoData(GeoLevel.STATE, Quality.LOW)
+    polygons = states.polygons
+except requests.HTTPError as exc:
+    print(f"IBGE API error: {exc}")
 ```

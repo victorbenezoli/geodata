@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/banner/readme_banner.png" alt="IBGE GeoData" width="600" />
+  <img src="docs/wiki/assets/logo/horizontal/ibge-geodata-logo-horizontal.svg" alt="IBGE GeoData" width="760" />
 </p>
 
 # ibge-geodata
@@ -9,21 +9,17 @@
 [![License](https://img.shields.io/badge/license-GPL-blue)](LICENSE.md)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-teal)](https://victorbenezoli.github.io/geodata)
 
-Python package to access and manipulate **Brazilian IBGE territorial geospatial data**.
+Python package for downloading, organising, and querying Brazilian territorial data published by IBGE.
 
----
+It combines administrative meshes, tabular metadata, point localisation, and coordinate utilities behind a small typed API.
 
-## Highlights
+## What Is Included
 
-- Typed API for all IBGE territorial levels (`COUNTRY` → `MUNICIPALITY`)
-- Geometry as `GeoDataFrame` with metadata aligned by `id`
-- Point-in-polygon localisation across all administrative levels with `GeoLocator`
-- Validated WGS-84 coordinates with `GeoCoords`
-- Geodesic distance and bearing calculations (haversine)
-- WGS-84 ↔ UTM coordinate conversion via `pyproj`
-- Quick plotting with `GeoDataFrame.plot()`
-
----
+- Administrative polygons for country, region, intermediate region, immediate region, state, and municipality
+- Metadata aligned by `id` in ready-to-use `DataFrame` and `GeoDataFrame` objects
+- Point-in-polygon localisation across multiple IBGE levels with a reusable cached locator
+- Validated WGS-84 coordinates with distance, bearing, shapely conversion, and UTM transforms
+- One-line plotting through GeoPandas for quick exploratory maps
 
 ## Installation
 
@@ -31,64 +27,97 @@ Python package to access and manipulate **Brazilian IBGE territorial geospatial 
 pip install ibge-geodata
 ```
 
----
+Python 3.11 or newer is required.
 
-## Quickstart
+## Quick Example
 
 ```python
-from geodata import GeoData, GeoLevel, Quality, GeoLocator
+from geodata import GeoData, GeoLevel, GeoLocator, Quality
 from geodata.utils.geocoords import GeoCoords
 
-# Download polygons + metadata for all states
+# Download polygons plus aligned metadata
 states = GeoData(GeoLevel.STATE, Quality.LOW)
-states.plot()
+print(states.polygons[["id", "nome", "sigla"]].head())
 
-# Locate a point across all administrative levels
-locator  = GeoLocator()
+# Plot directly with GeoPandas
+states.plot(figsize=(10, 8), edgecolor="white", linewidth=0.4)
+
+# Locate a point across administrative levels
+locator = GeoLocator(quality=Quality.LOW)
 brasilia = GeoCoords(lat=-15.7801, lon=-47.9292)
 location = locator.locate(brasilia)
 
-print(location.state)                # 'Distrito Federal'
-print(location.municipality)         # 'Brasília'
-print(location.region)               # 'Centro-Oeste'
-print(location.intermediate_region)  # 'Brasília'
-print(location.immediate_region)     # 'Brasília'
+print(location.to_dict())
+# {
+#     'municipality': 'Brasília',
+#     'state': 'Distrito Federal',
+#     'immediate_region': 'Brasília',
+#     'intermediate_region': 'Brasília',
+#     'region': 'Centro-Oeste'
+# }
 
-# Reuse the same locator for multiple points efficiently
+# Geodesic utilities
 manaus = GeoCoords(lat=-3.1190, lon=-60.0217)
-print(locator.locate(manaus).state)  # 'Amazonas'
+print(round(brasilia.distance_to(manaus), 1))
+print(round(brasilia.bearing_to(manaus), 1))
 
-# Geodesic calculations
-print(brasilia.distance_to(manaus))  # ~2689.6 km
-print(brasilia.bearing_to(manaus))   # ~322.0°
+# CRS conversion
+easting, northing = brasilia.to_utm("EPSG:32722")
+restored = GeoCoords.from_utm(easting, northing, "EPSG:32722")
+print(restored)
 ```
 
----
+## Core API
 
-## API
+| Object       | Purpose                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------ |
+| `GeoData`    | Downloads IBGE meshes and returns metadata or merged polygon layers                        |
+| `GeoLocator` | Resolves the municipality, state, region, and IBGE regional divisions that contain a point |
+| `GeoCoords`  | Validates coordinates and provides geodesic and CRS conversion helpers                     |
+| `GeoLevel`   | Enumerates supported territorial levels                                                    |
+| `Quality`    | Controls mesh resolution and download weight                                               |
 
-| Class        | Description                                                                                    |
-| ------------ | ---------------------------------------------------------------------------------------------- |
-| `GeoData`    | Main entry point — downloads polygons and aligned metadata for a given level and quality       |
-| `GeoLocator` | Point-in-polygon locator — returns a `GeoLocation` with all administrative divisions           |
-| `GeoCoords`  | Validated WGS-84 coordinate pair with geodesic distance, bearing, and UTM conversion utilities |
-| `GeoLevel`   | Enum: `COUNTRY`, `REGION`, `INTERMEDIATE_REGION`, `IMMEDIATE_REGION`, `STATE`, `MUNICIPALITY`  |
-| `Quality`    | Enum: `LOW`, `MEDIUM`, `HIGH` — controls boundary resolution and download size                 |
+## Typical Workflows
 
----
+### Download a territorial layer
+
+```python
+municipalities = GeoData(GeoLevel.MUNICIPALITY, Quality.MEDIUM)
+gdf = municipalities.polygons
+```
+
+### Inspect metadata only
+
+```python
+states = GeoData(GeoLevel.STATE, Quality.LOW)
+print(states.metadata.columns)
+```
+
+### Reuse a locator for many points
+
+```python
+locator = GeoLocator()
+
+for coords in [
+    GeoCoords(lat=-23.5505, lon=-46.6333),
+    GeoCoords(lat=-30.0346, lon=-51.2177),
+]:
+    print(locator.locate(coords).state)
+```
 
 ## Documentation
 
-Full documentation at **[victorbenezoli.github.io/geodata](https://victorbenezoli.github.io/geodata)**.
+Full documentation: [victorbenezoli.github.io/geodata](https://victorbenezoli.github.io/geodata)
 
----
+- Quickstart: practical usage patterns
+- API reference: classes, enums, and return types
+- Examples: mapping, localisation, and coordinate conversion
+- FAQ: quality, performance, and persistence tips
 
-## Requirements
+## Data Sources
 
-- Python 3.11+
-- `geopandas`, `pyproj`, `shapely`, `requests`
-
----
+- IBGE Mesh API for polygons
+- IBGE Localities API for administrative metadata
 
 ## License
 

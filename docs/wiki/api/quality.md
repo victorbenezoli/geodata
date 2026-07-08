@@ -1,4 +1,3 @@
-
 # Quality
 
 Enum that controls the resolution of polygons downloaded from the IBGE mesh API.
@@ -27,6 +26,8 @@ from geodata import Quality
 | Regional analyses                   | `MEDIUM`            |
 | Points near borders                 | `HIGH`              |
 | Cartographic publications           | `HIGH`              |
+
+Higher quality levels improve border fidelity but increase download size and in-memory geometry cost.
 
 ---
 

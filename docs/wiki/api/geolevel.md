@@ -1,4 +1,3 @@
-
 # GeoLevel
 
 Enum representing the geographic level of a territorial division.
@@ -11,14 +10,14 @@ from geodata import GeoLevel
 
 ## Values
 
-| Member                | `spatial`         | `metadata`                 | Description            |
-| --------------------- | ----------------- | -------------------------- | ---------------------- |
-| `COUNTRY`             | `"paises"`        | `"paises"`                 | Brazil (country level) |
-| `REGION`              | `"regiao"`        | `"regioes"`                | Macro-regions          |
-| `INTERMEDIATE_REGION` | `"intermediaria"` | `"regioes-intermediarias"` | Intermediate regions   |
-| `IMMEDIATE_REGION`    | `"imediata"`      | `"regioes-imediatas"`      | Immediate regions      |
-| `STATE`               | `"UF"`            | `"estados"`                | Federative units       |
-| `MUNICIPALITY`        | `"municipio"`     | `"municipios"`             | Municipalities         |
+| Member                | `spatial`                | `metadata`                 | Description            |
+| --------------------- | ------------------------ | -------------------------- | ---------------------- |
+| `COUNTRY`             | `"paises"`               | `"paises"`                 | Brazil (country level) |
+| `REGION`              | `"regiao"`               | `"regioes"`                | Macro-regions          |
+| `INTERMEDIATE_REGION` | `"regiao-intermediaria"` | `"regioes-intermediarias"` | Intermediate regions   |
+| `IMMEDIATE_REGION`    | `"regiao-imediata"`      | `"regioes-imediatas"`      | Immediate regions      |
+| `STATE`               | `"UF"`                   | `"estados"`                | Federative units       |
+| `MUNICIPALITY`        | `"municipio"`            | `"municipios"`             | Municipalities         |
 
 ---
 
@@ -48,3 +47,5 @@ Iterate over all levels:
 for level in GeoLevel:
     print(level.name, level.spatial)
 ```
+
+`GeoLevel` is also used internally by `GeoLocator` to iterate through all boundary layers.

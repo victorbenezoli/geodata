@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 360" role="img" aria-labelledby="title desc">
+  <title id="title">ibge-geodata official horizontal logo</title>
+  <desc id="desc">Horizontal logo for the ibge-geodata Python package: a Brazil-shaped grid icon on the left, wordmark and tagline on the right.</desc>
+  <style>
+    /* Palette: --green-dark #02582B; --green-deep #027239; --green-main #099841; --green-light #1AA13D; --yellow-accent #FDC408; --text-dark #02582B; --text-main #16A344; --text-muted #129A42; */
+    .tile { shape-rendering: geometricPrecision; }
+    .green-dark { fill: #02582B; }
+    .green-deep { fill: #027239; }
+    .green-main { fill: #099841; }
+    .green-light { fill: #1AA13D; }
+    .yellow-accent { fill: #FDC408; }
+    .wordmark { font-family: "Rubik Rounded", "Rubik", "Nunito Sans", "Arial Rounded MT Bold", system-ui, sans-serif; font-size: 124px; font-weight: 800; letter-spacing: -2.6px; }
+    .wordmark-dark { fill: #02582B; }
+    .wordmark-main { fill: #16A344; }
+    .tagline { font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 38px; font-weight: 500; letter-spacing: 1.0px; fill: #129A42; }
+  </style>
+
+  <g id="icon" aria-label="Brazil map icon made of rounded geodata tiles" transform="translate(74 52) scale(0.36) translate(-270 -123)">
+    <rect class="tile green-dark" x="438" y="123" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-dark" x="494" y="123" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-dark" x="327" y="181" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-dark" x="383" y="181" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-dark" x="438" y="181" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-dark" x="494" y="181" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="551" y="181" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="607" y="181" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="664" y="181" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-dark" x="327" y="238" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-dark" x="383" y="238" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-dark" x="438" y="238" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="494" y="238" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="551" y="238" width="42" height="42" rx="7.5"/>
+    <rect class="tile yellow-accent" x="607" y="238" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="663" y="238" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="720" y="238" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="776" y="238" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="271" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="326" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="382" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="438" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="494" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="551" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="607" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="663" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="720" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="776" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="832" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="888" y="295" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="270" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="326" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="382" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="437" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="494" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="550" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="607" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="663" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="720" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="776" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="832" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile yellow-accent" x="888" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="943" y="353" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="437" y="409" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="494" y="409" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="550" y="409" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="607" y="409" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="663" y="409" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="720" y="409" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-deep" x="776" y="409" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="832" y="409" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="888" y="409" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="494" y="465" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="550" y="465" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="607" y="465" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="663" y="465" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="720" y="465" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="776" y="465" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="832" y="465" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="550" y="520" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="607" y="520" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="663" y="520" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="720" y="520" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="776" y="520" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="832" y="520" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="550" y="577" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="607" y="577" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="663" y="577" width="42" height="42" rx="7.5"/>
+    <rect class="tile yellow-accent" x="720" y="576" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="776" y="577" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="832" y="577" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="607" y="632" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="663" y="632" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="720" y="632" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="607" y="687" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="663" y="687" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="550" y="745" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="607" y="745" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-light" x="663" y="745" width="42" height="42" rx="7.5"/>
+    <rect class="tile green-main" x="607" y="801" width="42" height="42" rx="7.5"/>
+  </g>
+
+  <g id="wordmark" aria-label="ibge-geodata">
+    <text class="wordmark" x="386" y="164" text-anchor="start"><tspan class="wordmark-dark">ibge-</tspan><tspan class="wordmark-main">geodata</tspan></text>
+  </g>
+
+  <g id="tagline" aria-label="Brazilian geodata, ready for analysis">
+    <text class="tagline" x="390" y="236" text-anchor="start">Brazilian geodata, ready for analysis</text>
+  </g>
+</svg>
