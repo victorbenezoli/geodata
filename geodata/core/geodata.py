@@ -1,21 +1,20 @@
 """
-This module provides the GeoDataBase class for handling geospatial data.
+This module provides the GeoData class for handling geospatial data.
 """
+
+from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
-import requests
 
-from geodata.core.geolevel import GeoLevel
-from geodata.core.quality import Quality
-
-URL_SPATIAL: str = "https://servicodados.ibge.gov.br/api/v4/malhas"
-URL_METADATA: str = "https://servicodados.ibge.gov.br/api/v1/localidades"
+from geodata.core.client import HTTPClient
+from geodata.core.enums import GeoLevel, Quality
+from geodata.storage import CacheManager
 
 
-class GeoDataBase:
+class GeoData:
     """
-    GeoDataBase class to handle geospatial data.
+    GeoData class to handle geospatial data.
 
     Attributes
     ----------
@@ -36,6 +35,11 @@ class GeoDataBase:
     def __init__(self, geolevel: GeoLevel, quality: Quality):
         self.geolevel = geolevel
         self.quality = quality
+        self._client = HTTPClient(
+            geolevel=geolevel,
+            quality=quality,
+            cache_path=self._cache_path(),
+        )
 
     def __repr__(self):
         """Return a string representation of the GeoData instance."""
@@ -44,6 +48,20 @@ class GeoDataBase:
     def __str__(self):
         """Return a string representation of the GeoData instance."""
         return f"GeoData: {self.geolevel.spatial} - {self.quality.value}"
+
+    def _cache_path(self) -> Path:
+        """
+        Get the cache path for the spatial data.
+
+        Returns
+        -------
+        Path
+            The cache path for the spatial data.
+        """
+        return CacheManager.get_cache_path(
+            geolevel_value=self.geolevel.spatial.value,
+            quality_value=self.quality.value,
+        )
 
     def _fetch_polygons(self) -> gpd.GeoDataFrame:
         """
@@ -54,29 +72,7 @@ class GeoDataBase:
         gpd.GeoDataFrame
             The polygons of the spatial data.
         """
-        url = f"{URL_SPATIAL}/paises/BR"
-        params = {
-            "intrarregiao": self.geolevel.spatial.value,
-            "qualidade": self.quality.value,
-            "formato": "application/vnd.geo+json",
-        }
-        if self.geolevel.spatial == "paises":
-            params.pop("intrarregiao")
-        with requests.Session() as session:
-            response = session.get(url, params=params)
-            response.raise_for_status()
-            data = (
-                gpd.GeoDataFrame.from_features(response.json())
-                .set_axis(["geometry", "id"], axis=1)
-                .reindex(columns=["id", "geometry"])
-                .assign(
-                    id=lambda df: (
-                        1 if self.geolevel.spatial.value == "paises" else df.id
-                    )
-                )
-                .astype({"id": int})
-            )
-        return data
+        return self._client.fetch_polygons()
 
     def _fetch_metadata(self) -> pd.DataFrame:
         """
@@ -87,13 +83,7 @@ class GeoDataBase:
         pd.DataFrame
             The metadata of the spatial data.
         """
-        url = f"{URL_METADATA}/{self.geolevel.metadata.value}"
-        params = {"view": "nivelado"}
-        with requests.Session() as session:
-            response = session.get(url, params=params)
-            response.raise_for_status()
-            data = response.json()
-        return pd.DataFrame.from_dict(data)
+        return self._client.fetch_metadata()
 
     @property
     def metadata(self) -> pd.DataFrame:
@@ -112,7 +102,7 @@ class GeoDataBase:
                     columns=[
                         x
                         for x in df.columns
-                        if x.endswith("id") and not x.startswith(self.geolevel.spatial)
+                        if x.endswith("id") and not x.startswith(self.geolevel.spatial.value)
                     ]
                 )
             )
@@ -121,7 +111,7 @@ class GeoDataBase:
                     [
                         (
                             x.split("-")[-1]
-                            if x.startswith(self.geolevel.spatial)
+                            if x.startswith(self.geolevel.spatial.value)
                             else x.replace("-nome", "")
                         )
                         for x in df.columns
@@ -144,7 +134,7 @@ class GeoDataBase:
             The polygons of the spatial data.
         """
         polygons = self._fetch_polygons()
-        if self.geolevel.spatial == "paises":
+        if self.geolevel.spatial.value == "paises":
             return polygons.set_crs("EPSG:4674")
         metadata = self.metadata
         crs = polygons.crs if polygons.crs is not None else "EPSG:4674"

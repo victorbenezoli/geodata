@@ -38,9 +38,8 @@ from dataclasses import dataclass
 
 import geopandas as gpd
 
-from geodata.core.base import GeoDataBase
-from geodata.core.geolevel import GeoLevel
-from geodata.core.quality import Quality
+from geodata.core.enums import GeoLevel, Quality
+from geodata.core.geodata import GeoData
 from geodata.utils.geocoords import GeoCoords
 
 
@@ -137,23 +136,23 @@ class GeoLocator:
 
         """
         return {
-            GeoLevel.MUNICIPALITY: GeoDataBase(
+            GeoLevel.MUNICIPALITY: GeoData(
                 GeoLevel.MUNICIPALITY,
                 self.quality,
             ).polygons,
-            GeoLevel.STATE: GeoDataBase(
+            GeoLevel.STATE: GeoData(
                 GeoLevel.STATE,
                 self.quality,
             ).polygons,
-            GeoLevel.IMMEDIATE_REGION: GeoDataBase(
+            GeoLevel.IMMEDIATE_REGION: GeoData(
                 GeoLevel.IMMEDIATE_REGION,
                 self.quality,
             ).polygons,
-            GeoLevel.INTERMEDIATE_REGION: GeoDataBase(
+            GeoLevel.INTERMEDIATE_REGION: GeoData(
                 GeoLevel.INTERMEDIATE_REGION,
                 self.quality,
             ).polygons,
-            GeoLevel.REGION: GeoDataBase(
+            GeoLevel.REGION: GeoData(
                 GeoLevel.REGION,
                 self.quality,
             ).polygons,

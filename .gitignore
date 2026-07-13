@@ -1,8 +1,25 @@
-# Ignore Python bytecode files
+# Python bytecode and cache
 *.pyc
-__pycache__/site/
-dist/
+*.pyo
+*.pyd
 __pycache__/
-*.pyc
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project-specific
 site/
 *.lock
+
+# Cache and data
+.cache/
+geodata_cache/
+*.sqlite
+*.sqlite3

@@ -2,10 +2,9 @@
 Core module initialization.
 """
 
-from .base import GeoDataBase as GeoData
-from .geolevel import GeoLevel
+from .enums import GeoLevel, Quality
+from .geodata import GeoData
 from .locator import GeoLocator
-from .quality import Quality
 
 __all__ = ["Quality", "GeoLevel", "GeoData", "GeoLocator"]
 __doc__ = """
