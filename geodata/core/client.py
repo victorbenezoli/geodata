@@ -5,6 +5,8 @@ This module provides the HTTPClient class for handling API requests,
 caching, and response processing.
 """
 
+import logging
+from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
@@ -42,6 +44,18 @@ class ApiVersion:
     @property
     def base_url(self) -> str:
         return f"https://servicodados.ibge.gov.br/api/" f"v{self.version}/{self.name}"
+
+
+@contextmanager
+def _silence_httpx_logging():
+    """Silencia temporariamente os logs INFO do httpx durante a sondagem de versões."""
+    httpx_logger = logging.getLogger("httpx")
+    previous_level = httpx_logger.level
+    httpx_logger.setLevel(logging.WARNING)
+    try:
+        yield
+    finally:
+        httpx_logger.setLevel(previous_level)
 
 
 class IBGEApiVersions:
@@ -114,11 +128,17 @@ class IBGEApiVersions:
         RuntimeError
             If the latest version of the API cannot be determined.
         """
-        for version in range(self.MAX_VERSION, 0, -1):
-            if self._exists(api, version):
-                return ApiVersion(name=api, version=version)
+        latest: int | None = None
+        with _silence_httpx_logging():
+            for version in range(1, self.MAX_VERSION + 1):
+                if not self._exists(api, version):
+                    break
+                latest = version
 
-        raise RuntimeError(f"Não foi possível descobrir a versão da API '{api}'.")
+        if latest is None:
+            raise RuntimeError(f"Não foi possível descobrir a versão da API '{api}'.")
+
+        return ApiVersion(name=api, version=latest)
 
     @cached_property
     def meshes(self) -> ApiVersion:
