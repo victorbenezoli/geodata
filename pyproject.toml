@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ibge-geodata"
-version = "2.1.0"
+version = "2.1.1"
 description = "Python package to use spatial data of Brazilian territorial levels available at IBGE"
 authors = ["Victor Benezoli <victorbenezoli@gmail.com>"]
 license = "GPL"
