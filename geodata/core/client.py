@@ -5,15 +5,16 @@ This module provides the HTTPClient class for handling API requests,
 caching, and response processing.
 """
 
-import logging
-from contextlib import contextmanager
+from __future__ import annotations
+
 from dataclasses import dataclass
-from functools import cached_property
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
 import geopandas as gpd
 import httpx
 import pandas as pd
+from bs4 import BeautifulSoup
 from hishel import SyncSqliteStorage
 from hishel.httpx import SyncCacheClient
 
@@ -43,116 +44,38 @@ class ApiVersion:
 
     @property
     def base_url(self) -> str:
-        return f"https://servicodados.ibge.gov.br/api/" f"v{self.version}/{self.name}"
+        return f"https://servicodados.ibge.gov.br/api/v{self.version}/{self.name}"
 
+    @staticmethod
+    def find_latest_version(api_service_name: str) -> ApiVersion:
+        with httpx.Client() as client:
+            response = client.get("https://servicodados.ibge.gov.br/api/docs/")
+            response.raise_for_status()
 
-@contextmanager
-def _silence_httpx_logging():
-    """Silencia temporariamente os logs INFO do httpx durante a sondagem de versões."""
-    httpx_logger = logging.getLogger("httpx")
-    previous_level = httpx_logger.level
-    httpx_logger.setLevel(logging.WARNING)
-    try:
-        yield
-    finally:
-        httpx_logger.setLevel(previous_level)
-
-
-class IBGEApiVersions:
-    """
-    Class to find the latest available versions of IBGE APIs.
-
-    Attributes
-    ----------
-    meshes : ApiVersion
-        The latest version of the "malhas" (meshes) API.
-    metadata : ApiVersion
-        The latest version of the "localidades" (metadata) API.
-    """
-
-    BASE_URL = "https://servicodados.ibge.gov.br/api"
-    MAX_VERSION = 20
-
-    def __init__(
-        self,
-        *,
-        timeout: float = 10.0,
-        client: httpx.Client | None = None,
-    ):
-        self._client = client or httpx.Client(timeout=timeout)
-
-    def _exists(self, api: str, version: int) -> bool:
-        """
-        Check if a specific version of an IBGE API exists.
-
-        Parameters
-        ----------
-        api : str
-            The name of the API (e.g., "malhas" or "localidades").
-        version : int
-            The version number to check.
-
-        Returns
-        -------
-        bool
-            True if the API version exists, False otherwise.
-        """
-        url = f"{self.BASE_URL}/docs/{api}"
-
-        try:
-            response = self._client.get(
-                url,
-                params={"versao": version},
-                follow_redirects=True,
+        soup = BeautifulSoup(response.text, "html.parser")
+        api_link = next(
+            (
+                link
+                for link in soup.select("a.headline")
+                if link.get("id") == api_service_name
+            ),
+            None,
+        )
+        href = api_link.get("href") if api_link is not None else None
+        if not isinstance(href, str) or not href:
+            raise RuntimeError(
+                f"Não foi possível descobrir a versão da API '{api_service_name}'."
             )
-        except httpx.HTTPError:
-            return False
 
-        return response.status_code != 500
+        version = parse_qs(urlparse(href).query).get("versao", ["1"])[0]
+        try:
+            latest = int(version)
+        except ValueError as exc:
+            raise RuntimeError(
+                f"Não foi possível descobrir a versão da API '{api_service_name}'."
+            ) from exc
 
-    def latest_version(self, api: str) -> ApiVersion:
-        """
-        Get the latest available version of a specific IBGE API.
-
-        Parameters
-        ----------
-        api : str
-            The name of the API (e.g., "malhas" or "localidades").
-
-        Returns
-        -------
-        ApiVersion
-            The latest available version of the specified API.
-        Raises
-        ------
-        RuntimeError
-            If the latest version of the API cannot be determined.
-        """
-        latest: int | None = None
-        with _silence_httpx_logging():
-            for version in range(1, self.MAX_VERSION + 1):
-                if not self._exists(api, version):
-                    break
-                latest = version
-
-        if latest is None:
-            raise RuntimeError(f"Não foi possível descobrir a versão da API '{api}'.")
-
-        return ApiVersion(name=api, version=latest)
-
-    @cached_property
-    def meshes(self) -> ApiVersion:
-        """
-        Get the latest available version of the "malhas" (meshes) API.
-        """
-        return self.latest_version("malhas")
-
-    @cached_property
-    def metadata(self) -> ApiVersion:
-        """
-        Get the latest available version of the "localidades" (metadata) API.
-        """
-        return self.latest_version("localidades")
+        return ApiVersion(name=api_service_name, version=latest)
 
 
 class HTTPClient:
@@ -189,7 +112,7 @@ class HTTPClient:
         APIError
             If the API request fails.
         """
-        url_base = IBGEApiVersions().meshes.base_url
+        url_base = ApiVersion.find_latest_version("malhas").base_url
         url = f"{url_base}/paises/BR"
         params = {
             "intrarregiao": self.geolevel.spatial.value,
@@ -235,7 +158,7 @@ class HTTPClient:
         APIError
             If the API request fails.
         """
-        url_base = IBGEApiVersions().metadata.base_url
+        url_base = ApiVersion.find_latest_version("localidades").base_url
         url = f"{url_base}/{self.geolevel.metadata.value}"
         params = {"view": METADATA_VIEW}
         with httpx.Client() as client:
