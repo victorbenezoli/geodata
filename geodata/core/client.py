@@ -7,14 +7,14 @@ caching, and response processing.
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
 
 import geopandas as gpd
 import httpx
 import pandas as pd
-from bs4 import BeautifulSoup
+from curl_cffi import requests
 from hishel import SyncSqliteStorage
 from hishel.httpx import SyncCacheClient
 
@@ -48,34 +48,30 @@ class ApiVersion:
 
     @staticmethod
     def find_latest_version(api_service_name: str) -> ApiVersion:
-        with httpx.Client() as client:
-            response = client.get("https://servicodados.ibge.gov.br/api/docs/")
-            response.raise_for_status()
+        if api_service_name == "localidades":
+            return ApiVersion(name=api_service_name, version=1)
 
-        soup = BeautifulSoup(response.text, "html.parser")
-        api_link = next(
-            (
-                link
-                for link in soup.select("a.headline")
-                if link.get("id") == api_service_name
-            ),
-            None,
+        docs_url = (
+            "https://servicodados.ibge.gov.br/api/docs/"
+            f"{api_service_name}"
         )
-        href = api_link.get("href") if api_link is not None else None
-        if not isinstance(href, str) or not href:
-            raise RuntimeError(
-                f"Não foi possível descobrir a versão da API '{api_service_name}'."
-            )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            with requests.Session(
+                impersonate="chrome",
+                debug=False,
+            ) as session:
+                for version in range(20, 0, -1):
+                    try:
+                        response = session.get(f"{docs_url}?versao={version}")
+                        response.raise_for_status()
+                    except requests.exceptions.RequestException:
+                        continue
+                    return ApiVersion(name=api_service_name, version=version)
 
-        version = parse_qs(urlparse(href).query).get("versao", ["1"])[0]
-        try:
-            latest = int(version)
-        except ValueError as exc:
-            raise RuntimeError(
-                f"Não foi possível descobrir a versão da API '{api_service_name}'."
-            ) from exc
-
-        return ApiVersion(name=api_service_name, version=latest)
+        raise RuntimeError(
+            f"Não foi possível descobrir a versão da API '{api_service_name}'."
+        )
 
 
 class HTTPClient:

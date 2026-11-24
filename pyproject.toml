@@ -27,11 +27,11 @@ pytest = "^8.3.4"
 numpy = "^2.2.3"
 rich = "^14.0.0"
 matplotlib = "^3.10.3"
-beautifulsoup4 = "^4.14.3"
 httpx = "^0.28.1"
 lxml = "^6.0.2"
 xmltodict = "^1.0.4"
 hishel = "^1.3.0"
+curl-cffi = "^0.17.0"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
